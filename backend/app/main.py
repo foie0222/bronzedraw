@@ -1,7 +1,11 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
+from .database import get_db, JanUrlMappingModel
 
 app = FastAPI(title="JAN-URL Conversion API", version="1.0.0")
 
@@ -21,22 +25,8 @@ class JanUrlMapping(BaseModel):
     brand: Optional[str] = None
     product_name: Optional[str] = None
 
-
-# サンプルデータ（後でAurora PostgreSQLに置き換え）
-SAMPLE_DATA = {
-    "4571657070839": {
-        "jan_code": "4571657070839",
-        "url": "https://www.goldwin.co.jp/ap/item/i/m/NP12503",
-        "brand": "The North Face",
-        "product_name": "Mountain Down Jacket",
-    },
-    "4548913619937": {
-        "jan_code": "4548913619937",
-        "url": "https://www.goldwin.co.jp/ap/item/i/m/NP62236",
-        "brand": "The North Face",
-        "product_name": "Nuptse Jacket",
-    },
-}
+    class Config:
+        from_attributes = True
 
 
 @app.get("/")
@@ -46,29 +36,40 @@ def read_root():
 
 
 @app.get("/api/convert", response_model=JanUrlMapping)
-def convert_jan_to_url(jan: str):
+async def convert_jan_to_url(jan: str, db: AsyncSession = Depends(get_db)):
     """
     JANコードからURLに変換するAPI
 
     Args:
         jan: JANコード（13桁）
+        db: データベースセッション
 
     Returns:
         JanUrlMapping: JAN-URLマッピング情報
     """
-    if jan not in SAMPLE_DATA:
+    result = await db.execute(
+        select(JanUrlMappingModel).where(JanUrlMappingModel.jan_code == jan)
+    )
+    mapping = result.scalar_one_or_none()
+
+    if not mapping:
         raise HTTPException(
             status_code=404,
             detail=f"JAN code '{jan}' not found"
         )
 
-    return SAMPLE_DATA[jan]
+    return mapping
 
 
 @app.get("/health")
-def health_check():
-    """ヘルスチェック用エンドポイント"""
-    return {"status": "ok"}
+async def health_check(db: AsyncSession = Depends(get_db)):
+    """ヘルスチェック用エンドポイント（DB接続確認含む）"""
+    try:
+        # DB接続確認
+        await db.execute(select(1))
+        return {"status": "ok", "database": "connected"}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Database connection failed: {str(e)}")
 
 
 # Lambda用のハンドラー（Mangum使用）

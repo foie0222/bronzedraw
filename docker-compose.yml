@@ -1,4 +1,24 @@
 services:
+  db:
+    image: postgres:16
+    container_name: silverlose-db
+    environment:
+      POSTGRES_USER: silverlose
+      POSTGRES_PASSWORD: silverlose_dev_password
+      POSTGRES_DB: silverlose
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - silverlose-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U silverlose"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./backend
@@ -7,6 +27,10 @@ services:
       - "8000:8000"
     environment:
       - ENV=dev
+      - DATABASE_URL=postgresql://silverlose:silverlose_dev_password@db:5432/silverlose
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - silverlose-network
 
@@ -22,6 +46,9 @@ services:
       - backend
     networks:
       - silverlose-network
+
+volumes:
+  postgres_data:
 
 networks:
   silverlose-network:
