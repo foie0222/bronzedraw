@@ -3,6 +3,7 @@ from aws_cdk import (
     Duration,
     RemovalPolicy,
     SecretValue,
+    CfnOutput,
     aws_ec2 as ec2,
     aws_rds as rds,
     aws_secretsmanager as secretsmanager,
@@ -77,3 +78,36 @@ class DatabaseStack(Stack):
         # タグ追加
         Tags.of(self).add("Env", env_name)
         Tags.of(self).add("Project", "bronzedraw")
+
+        # Outputs
+        CfnOutput(
+            self,
+            "DBClusterEndpoint",
+            value=self.db_cluster.cluster_endpoint.hostname,
+            description="Aurora Cluster Endpoint",
+            export_name=f"BronzedrawDBClusterEndpoint-{env_name}",
+        )
+
+        CfnOutput(
+            self,
+            "DBClusterIdentifier",
+            value=self.db_cluster.cluster_identifier,
+            description="Aurora Cluster Identifier",
+            export_name=f"BronzedrawDBClusterIdentifier-{env_name}",
+        )
+
+        CfnOutput(
+            self,
+            "DBSecretArn",
+            value=self.db_secret.secret_arn,
+            description="Database Secret ARN",
+            export_name=f"BronzedrawDBSecretArn-{env_name}",
+        )
+
+        CfnOutput(
+            self,
+            "DBName",
+            value="bronzedraw",
+            description="Database Name",
+            export_name=f"BronzedrawDBName-{env_name}",
+        )

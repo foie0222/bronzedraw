@@ -1,5 +1,6 @@
 from aws_cdk import (
     Stack,
+    CfnOutput,
     aws_ec2 as ec2,
     Tags,
 )
@@ -70,3 +71,28 @@ class NetworkStack(Stack):
         # 全リソースにEnvタグを追加
         Tags.of(self).add("Env", env_name)
         Tags.of(self).add("Project", "bronzedraw")
+
+        # Outputs
+        CfnOutput(
+            self,
+            "VpcId",
+            value=self.vpc.vpc_id,
+            description="VPC ID",
+            export_name=f"BronzedrawVpcId-{env_name}",
+        )
+
+        CfnOutput(
+            self,
+            "LambdaSecurityGroupId",
+            value=self.lambda_sg.security_group_id,
+            description="Lambda Security Group ID",
+            export_name=f"BronzedrawLambdaSgId-{env_name}",
+        )
+
+        CfnOutput(
+            self,
+            "AuroraSecurityGroupId",
+            value=self.aurora_sg.security_group_id,
+            description="Aurora Security Group ID",
+            export_name=f"BronzedrawAuroraSgId-{env_name}",
+        )

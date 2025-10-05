@@ -2,6 +2,7 @@ from aws_cdk import (
     Stack,
     RemovalPolicy,
     Duration,
+    CfnOutput,
     aws_s3 as s3,
     aws_cloudfront as cloudfront,
     aws_cloudfront_origins as origins,
@@ -134,3 +135,28 @@ class FrontendStack(Stack):
         # タグ追加
         Tags.of(self).add("Env", env_name)
         Tags.of(self).add("Project", "bronzedraw")
+
+        # Outputs
+        CfnOutput(
+            self,
+            "CloudFrontUrl",
+            value=f"https://{self.distribution.distribution_domain_name}",
+            description="CloudFront Distribution URL",
+            export_name=f"BronzedrawCloudFrontUrl-{env_name}",
+        )
+
+        CfnOutput(
+            self,
+            "CloudFrontDistributionId",
+            value=self.distribution.distribution_id,
+            description="CloudFront Distribution ID",
+            export_name=f"BronzedrawCloudFrontId-{env_name}",
+        )
+
+        CfnOutput(
+            self,
+            "FrontendBucketName",
+            value=self.frontend_bucket.bucket_name,
+            description="Frontend S3 Bucket Name",
+            export_name=f"BronzedrawFrontendBucket-{env_name}",
+        )
