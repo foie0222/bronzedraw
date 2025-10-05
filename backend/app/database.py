@@ -2,9 +2,12 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, Integer, String, Text, DateTime, func
 import os
+import sys
 
 # 環境変数からDATABASE_URLを取得
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://silverlose:silverlose_dev_password@localhost:5432/silverlose")
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    sys.exit("Error: The DATABASE_URL environment variable is not set. Please set it to a valid database connection string.")
 
 # PostgreSQL用の接続URL（asyncpg使用）
 if DATABASE_URL.startswith("postgresql://"):
