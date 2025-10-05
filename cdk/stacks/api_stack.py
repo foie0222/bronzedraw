@@ -80,11 +80,11 @@ class ApiStack(Stack):
             self,
             f"JanApiLambda-{env_name}",
             function_name=f"bronzedraw-jan-api-{env_name}",
-            runtime=_lambda.Runtime.PYTHON_3_11,
+            runtime=_lambda.Runtime.PYTHON_3_12,
             code=_lambda.Code.from_asset(
                 "../backend",
                 bundling=BundlingOptions(
-                    image=_lambda.Runtime.PYTHON_3_11.bundling_image,
+                    image=_lambda.Runtime.PYTHON_3_12.bundling_image,
                     command=[
                         "bash",
                         "-c",
