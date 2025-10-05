@@ -3,6 +3,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 import os
 import sys
 import json
+import boto3
 
 # 環境変数からDATABASE_URLを取得（ローカルDocker用）
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -15,7 +16,6 @@ if not DATABASE_URL:
 
     if db_secret_arn and db_endpoint:
         # Secrets Managerから認証情報を取得
-        import boto3
         secrets_client = boto3.client('secretsmanager')
         secret_value = secrets_client.get_secret_value(SecretId=db_secret_arn)
         secret = json.loads(secret_value['SecretString'])
