@@ -2,6 +2,7 @@ from aws_cdk import (
     Stack,
     Duration,
     RemovalPolicy,
+    CfnOutput,
     aws_lambda as _lambda,
     aws_apigateway as apigw,
     aws_ec2 as ec2,
@@ -132,3 +133,28 @@ class ApiStack(Stack):
         # タグ追加
         Tags.of(self).add("Env", env_name)
         Tags.of(self).add("Project", "bronzedraw")
+
+        # Outputs
+        CfnOutput(
+            self,
+            "ApiUrl",
+            value=self.api.url,
+            description="API Gateway URL",
+            export_name=f"BronzedrawApiUrl-{env_name}",
+        )
+
+        CfnOutput(
+            self,
+            "LambdaFunctionArn",
+            value=self.jan_api_lambda.function_arn,
+            description="Lambda Function ARN",
+            export_name=f"BronzedrawLambdaArn-{env_name}",
+        )
+
+        CfnOutput(
+            self,
+            "LambdaFunctionName",
+            value=self.jan_api_lambda.function_name,
+            description="Lambda Function Name",
+            export_name=f"BronzedrawLambdaName-{env_name}",
+        )
