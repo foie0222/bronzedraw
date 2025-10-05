@@ -12,10 +12,10 @@ CREATE TABLE jan_url_mapping (
 -- インデックス作成
 CREATE INDEX idx_jan_code ON jan_url_mapping(jan_code);
 
--- サンプルデータ投入
+-- サンプルデータ投入（架空の商品）
 INSERT INTO jan_url_mapping (jan_code, url, brand, product_name) VALUES
-    ('4571657070839', 'https://www.goldwin.co.jp/ap/item/i/m/NP12503', 'The North Face', 'Mountain Down Jacket'),
-    ('4901780790292', 'https://example.com/product/4901780790292', 'Sample Brand', 'Sample Product');
+    ('4900000000001', 'https://example.com/products/outdoor-jacket-001', 'Mountain Gear', 'Alpine Pro Jacket'),
+    ('4900000000002', 'https://example.com/products/running-shoes-002', 'RunFast', 'Speed Runner X1');
 
 -- 更新日時を自動更新するトリガー関数
 CREATE OR REPLACE FUNCTION update_updated_at_column()
