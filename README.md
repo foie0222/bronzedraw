@@ -569,8 +569,18 @@ CREATE INDEX idx_jan_code ON jan_url_mapping(jan_code);
 ## インフラ管理方針
 
 ### Infrastructure as Code（IaC）
-- **不使用**: AWSマネジメントコンソールで手動構築
-- 理由: 小規模構成、コンソール操作による柔軟な対応を優先
+- **使用**: AWS CDK（Python）
+- **スタック構成**:
+  - **NetworkStack**: VPC、サブネット、セキュリティグループ
+  - **DatabaseStack**: Aurora PostgreSQL Serverless v2
+  - **ApiStack**: Lambda + API Gateway
+  - **FrontendStack**: S3 + CloudFront
+- **デプロイコマンド**:
+  ```bash
+  cd cdk_app
+  cdk deploy --all  # 全スタックをデプロイ
+  cdk deploy BronzedrawDatabaseStack-dev  # Database Stackのみデプロイ
+  ```
 
 ### ドキュメント
 - 構築手順書（本要件定義書に基づく）

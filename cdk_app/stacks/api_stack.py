@@ -7,6 +7,8 @@ from aws_cdk import (
     aws_ec2 as ec2,
     aws_iam as iam,
     aws_logs as logs,
+    aws_rds as rds,
+    aws_secretsmanager as secretsmanager,
     Tags,
 )
 from constructs import Construct
@@ -24,6 +26,8 @@ class ApiStack(Stack):
         env_name: str = "dev",
         vpc: ec2.Vpc = None,
         lambda_sg: ec2.SecurityGroup = None,
+        db_cluster: rds.DatabaseCluster = None,
+        db_secret: secretsmanager.Secret = None,
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -64,6 +68,10 @@ class ApiStack(Stack):
             ],
         )
 
+        # Secrets Managerからシークレット読み取り権限を付与
+        if db_secret:
+            db_secret.grant_read(lambda_role)
+
         # Lambda関数（FastAPI + Mangum）
         from aws_cdk import BundlingOptions
 
@@ -89,6 +97,8 @@ class ApiStack(Stack):
             memory_size=512,
             environment={
                 "ENV": env_name,
+                "DB_SECRET_ARN": db_secret.secret_arn if db_secret else "",
+                "DB_CLUSTER_ENDPOINT": db_cluster.cluster_endpoint.hostname if db_cluster else "",
             },
             vpc=vpc,
             vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS),
