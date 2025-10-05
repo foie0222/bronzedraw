@@ -30,9 +30,9 @@ def test_lambda_function_created():
     # Lambda関数が作成されていることを確認
     template.resource_count_is("AWS::Lambda::Function", 1)
 
-    # Python 3.11ランタイムであることを確認
+    # Python 3.12ランタイムであることを確認
     template.has_resource_properties("AWS::Lambda::Function", {
-        "Runtime": "python3.11"
+        "Runtime": "python3.12"
     })
 
 
