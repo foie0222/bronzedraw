@@ -59,7 +59,7 @@ class DatabaseStack(Stack):
                 performance_insight_retention=rds.PerformanceInsightRetention.DEFAULT,  # 7日間
             ),
             serverless_v2_min_capacity=0.5,  # 最小ACU
-            serverless_v2_max_capacity=1.0 if env_name == "dev" else 2.0,  # 最大ACU
+            serverless_v2_max_capacity=1.0,  # 最大ACU
             vpc=vpc,
             vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS),
             security_groups=[aurora_sg] if aurora_sg else None,
