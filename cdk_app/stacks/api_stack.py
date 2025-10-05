@@ -99,6 +99,7 @@ class ApiStack(Stack):
                 "ENV": env_name,
                 "DB_SECRET_ARN": db_secret.secret_arn if db_secret else "",
                 "DB_CLUSTER_ENDPOINT": db_cluster.cluster_endpoint.hostname if db_cluster else "",
+                "DB_NAME": "bronzedraw",
             },
             vpc=vpc,
             vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS),

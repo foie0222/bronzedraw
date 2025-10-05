@@ -71,6 +71,7 @@ class DatabaseStack(Stack):
             cloudwatch_logs_exports=["postgresql"],  # CloudWatch Logsにログ出力
             removal_policy=RemovalPolicy.SNAPSHOT if env_name == "prod" else RemovalPolicy.DESTROY,
             deletion_protection=True if env_name == "prod" else False,
+            enable_data_api=True,  # RDS Query Editor用にData APIを有効化
         )
 
         # タグ追加
