@@ -577,7 +577,7 @@ CREATE INDEX idx_jan_code ON jan_url_mapping(jan_code);
   - **FrontendStack**: S3 + CloudFront
 - **デプロイコマンド**:
   ```bash
-  cd cdk_app
+  cd cdk
   cdk deploy --all  # 全スタックをデプロイ
   cdk deploy BronzedrawDatabaseStack-dev  # Database Stackのみデプロイ
   ```
