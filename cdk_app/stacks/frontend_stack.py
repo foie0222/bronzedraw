@@ -30,7 +30,7 @@ class FrontendStack(Stack):
         self.frontend_bucket = s3.Bucket(
             self,
             f"FrontendBucket-{env_name}",
-            bucket_name=f"silverlose-frontend-{env_name}-{Stack.of(self).account}",
+            bucket_name=f"bronzedraw-frontend-{env_name}-{Stack.of(self).account}",
             encryption=s3.BucketEncryption.S3_MANAGED,
             versioned=True,  # バージョニング有効（ロールバック対応）
             block_public_access=s3.BlockPublicAccess.BLOCK_ALL,  # パブリックアクセスブロック
@@ -76,7 +76,7 @@ class FrontendStack(Stack):
                 ),
             ],
             price_class=cloudfront.PriceClass.PRICE_CLASS_200,  # 日本・アジア・北米・欧州
-            comment=f"Silverlose Frontend Distribution - {env_name}",
+            comment=f"Bronzedraw Frontend Distribution - {env_name}",
         )
 
         # S3バケットポリシー: CloudFrontからのアクセスのみ許可
@@ -133,4 +133,4 @@ class FrontendStack(Stack):
 
         # タグ追加
         Tags.of(self).add("Env", env_name)
-        Tags.of(self).add("Project", "silverlose")
+        Tags.of(self).add("Project", "bronzedraw")

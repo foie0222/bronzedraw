@@ -70,7 +70,7 @@ class ApiStack(Stack):
         self.jan_api_lambda = _lambda.Function(
             self,
             f"JanApiLambda-{env_name}",
-            function_name=f"silverlose-jan-api-{env_name}",
+            function_name=f"bronzedraw-jan-api-{env_name}",
             runtime=_lambda.Runtime.PYTHON_3_11,
             code=_lambda.Code.from_asset(
                 "../backend",
@@ -100,7 +100,7 @@ class ApiStack(Stack):
         self.api = apigw.LambdaRestApi(
             self,
             f"JanApi-{env_name}",
-            rest_api_name=f"silverlose-jan-api-{env_name}",
+            rest_api_name=f"bronzedraw-jan-api-{env_name}",
             handler=self.jan_api_lambda,
             proxy=True,  # /{proxy+} ですべてのリクエストをLambdaに転送
             default_cors_preflight_options=apigw.CorsOptions(
@@ -120,4 +120,4 @@ class ApiStack(Stack):
 
         # タグ追加
         Tags.of(self).add("Env", env_name)
-        Tags.of(self).add("Project", "silverlose")
+        Tags.of(self).add("Project", "bronzedraw")

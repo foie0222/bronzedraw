@@ -1,6 +1,5 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Integer, String, Text, DateTime, func
+from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, func
+from sqlalchemy.orm import declarative_base, sessionmaker
 import os
 import sys
 
@@ -9,18 +8,22 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     sys.exit("Error: The DATABASE_URL environment variable is not set. Please set it to a valid database connection string.")
 
-# PostgreSQL用の接続URL（asyncpg使用）
-if DATABASE_URL.startswith("postgresql://"):
-    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+# echo=True は開発環境のみで有効化
+ECHO_SQL = os.getenv("ENV", "development") == "development"
 
 # エンジン作成
-engine = create_async_engine(DATABASE_URL, echo=True)
+engine = create_engine(
+    DATABASE_URL,
+    echo=ECHO_SQL,
+    pool_pre_ping=True,
+    pool_recycle=3600
+)
 
 # セッションファクトリ
-async_session = async_sessionmaker(
-    engine,
-    class_=AsyncSession,
-    expire_on_commit=False
+SessionLocal = sessionmaker(
+    bind=engine,
+    autocommit=False,
+    autoflush=False
 )
 
 # Base作成
@@ -41,9 +44,9 @@ class JanUrlMappingModel(Base):
 
 
 # 依存関係注入用
-async def get_db():
-    async with async_session() as session:
-        try:
-            yield session
-        finally:
-            await session.close()
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

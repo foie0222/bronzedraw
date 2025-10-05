@@ -1,20 +1,20 @@
 services:
   db:
     image: postgres:16
-    container_name: silverlose-db
+    container_name: bronzedraw-db
     environment:
-      POSTGRES_USER: silverlose
-      POSTGRES_PASSWORD: silverlose_dev_password
-      POSTGRES_DB: silverlose
+      POSTGRES_USER: bronzedraw
+      POSTGRES_PASSWORD: bronzedraw_dev_password
+      POSTGRES_DB: bronzedraw
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - silverlose-network
+      - bronzedraw-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U silverlose"]
+      test: ["CMD-SHELL", "pg_isready -U bronzedraw"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -27,12 +27,12 @@ services:
       - "8000:8000"
     environment:
       - ENV=dev
-      - DATABASE_URL=postgresql://silverlose:silverlose_dev_password@db:5432/silverlose
+      - DATABASE_URL=postgresql://bronzedraw:bronzedraw_dev_password@db:5432/bronzedraw
     depends_on:
       db:
         condition: service_healthy
     networks:
-      - silverlose-network
+      - bronzedraw-network
 
   frontend:
     build:
@@ -45,11 +45,11 @@ services:
     depends_on:
       - backend
     networks:
-      - silverlose-network
+      - bronzedraw-network
 
 volumes:
   postgres_data:
 
 networks:
-  silverlose-network:
+  bronzedraw-network:
     driver: bridge

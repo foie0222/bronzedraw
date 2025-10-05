@@ -19,8 +19,8 @@ class NetworkStack(Stack):
         # VPC作成（dev環境: 10.0.0.0/16）
         self.vpc = ec2.Vpc(
             self,
-            f"SilverloseVpc-{env_name}",
-            vpc_name=f"silverlose-vpc-{env_name}",
+            f"BronzedrawVpc-{env_name}",
+            vpc_name=f"bronzedraw-vpc-{env_name}",
             ip_addresses=ec2.IpAddresses.cidr("10.0.0.0/16"),
             max_azs=2,  # 2つのAZを使用
             nat_gateways=2,  # 各AZにNAT Gateway配置（冗長化）
@@ -45,7 +45,7 @@ class NetworkStack(Stack):
             self,
             f"LambdaSg-{env_name}",
             vpc=self.vpc,
-            security_group_name=f"silverlose-lambda-sg-{env_name}",
+            security_group_name=f"bronzedraw-lambda-sg-{env_name}",
             description="Security group for Lambda functions",
             allow_all_outbound=True,
         )
@@ -55,7 +55,7 @@ class NetworkStack(Stack):
             self,
             f"AuroraSg-{env_name}",
             vpc=self.vpc,
-            security_group_name=f"silverlose-aurora-sg-{env_name}",
+            security_group_name=f"bronzedraw-aurora-sg-{env_name}",
             description="Security group for Aurora database",
             allow_all_outbound=False,
         )
@@ -69,4 +69,4 @@ class NetworkStack(Stack):
 
         # 全リソースにEnvタグを追加
         Tags.of(self).add("Env", env_name)
-        Tags.of(self).add("Project", "silverlose")
+        Tags.of(self).add("Project", "bronzedraw")

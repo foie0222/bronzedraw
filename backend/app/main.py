@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from .database import get_db, JanUrlMappingModel
@@ -36,7 +36,7 @@ def read_root():
 
 
 @app.get("/api/convert", response_model=JanUrlMapping)
-async def convert_jan_to_url(jan: str, db: AsyncSession = Depends(get_db)):
+def convert_jan_to_url(jan: str, db: Session = Depends(get_db)):
     """
     JANコードからURLに変換するAPI
 
@@ -47,7 +47,7 @@ async def convert_jan_to_url(jan: str, db: AsyncSession = Depends(get_db)):
     Returns:
         JanUrlMapping: JAN-URLマッピング情報
     """
-    result = await db.execute(
+    result = db.execute(
         select(JanUrlMappingModel).where(JanUrlMappingModel.jan_code == jan)
     )
     mapping = result.scalar_one_or_none()
@@ -62,11 +62,11 @@ async def convert_jan_to_url(jan: str, db: AsyncSession = Depends(get_db)):
 
 
 @app.get("/health")
-async def health_check(db: AsyncSession = Depends(get_db)):
+def health_check(db: Session = Depends(get_db)):
     """ヘルスチェック用エンドポイント（DB接続確認含む）"""
     try:
         # DB接続確認
-        await db.execute(select(1))
+        db.execute(select(1))
         return {"status": "ok", "database": "connected"}
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Database connection failed: {str(e)}")
