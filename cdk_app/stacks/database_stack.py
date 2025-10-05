@@ -58,14 +58,6 @@ class DatabaseStack(Stack):
                 enable_performance_insights=True,
                 performance_insight_retention=rds.PerformanceInsightRetention.DEFAULT,  # 7日間
             ),
-            readers=[
-                rds.ClusterInstance.serverless_v2(
-                    f"Reader-{env_name}",
-                    scale_with_writer=True,  # Writerに合わせてスケーリング
-                    enable_performance_insights=True,
-                    performance_insight_retention=rds.PerformanceInsightRetention.DEFAULT,
-                ),
-            ] if env_name == "prod" else [],  # dev環境はreaderなし
             serverless_v2_min_capacity=0.5,  # 最小ACU
             serverless_v2_max_capacity=1.0 if env_name == "dev" else 2.0,  # 最大ACU
             vpc=vpc,
