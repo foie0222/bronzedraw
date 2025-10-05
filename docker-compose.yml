@@ -27,6 +27,7 @@ services:
       - "8000:8000"
     environment:
       - ENV=dev
+      - DEBUG=true
       - DATABASE_URL=postgresql://bronzedraw:bronzedraw_dev_password@db:5432/bronzedraw
     depends_on:
       db:

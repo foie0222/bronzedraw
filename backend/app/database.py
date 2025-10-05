@@ -8,13 +8,12 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     sys.exit("Error: The DATABASE_URL environment variable is not set. Please set it to a valid database connection string.")
 
-# echo=True は開発環境のみで有効化
-ECHO_SQL = os.getenv("ENV", "development") == "development"
+DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
 # エンジン作成
 engine = create_engine(
     DATABASE_URL,
-    echo=ECHO_SQL,
+    echo=DEBUG,
     pool_pre_ping=True,
     pool_recycle=3600
 )
