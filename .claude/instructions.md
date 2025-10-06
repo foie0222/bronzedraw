@@ -24,3 +24,10 @@
   - `chore`: ビルドプロセスやツールの変更
 - 例: `docs: #20 .claude/instructions.mdを追加`
 - **重要**: Claudeの署名やCo-Authored-By行は含めない
+
+## PR作成
+
+- `gh`コマンドを使用してPRを作成
+- 環境変数`GH_TOKEN`にGitHub Personal Access Tokenを設定して実行
+- 例: `export GH_TOKEN="..." && gh pr create --title "..." --body "..."`
+- MCP GitHubツールの`create_pull_request`は認証エラーが発生する場合があるため、ghコマンドを優先的に使用
